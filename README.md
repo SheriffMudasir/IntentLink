@@ -61,43 +61,52 @@ Simply state what you want to do. Our backend pipeline does the heavy lifting:
 Our architecture is a robust, three-layer system designed for security and scalability.
 
 ```mermaid
-graph TD
+graph LR
+    classDef user fill:#2471A3,color:#FFFFFF,stroke:#1B4F72,stroke-width:2px
+    classDef backend fill:#229954,color:#FFFFFF,stroke:#196F3D,stroke-width:2px
+    classDef external fill:#D4AC0D,color:#000000,stroke:#B7950B,stroke-width:2px
+    classDef blockchain fill:#7D3C98,color:#FFFFFF,stroke:#512E5F,stroke-width:2px
+
     subgraph User
-        A[Browser: Next.js UI]
+        UI[<b>Next.js Frontend</b>]
     end
+    class UI user
 
-    subgraph Backend Services
-        B[API Server: Django-Ninja]
-        C[Task Queue: Celery + Redis]
-        D[Simulation Worker]
-        E[Relayer Worker]
-        F[Database: PostgreSQL]
+    subgraph "Backend (IntentLink Server)"
+        API["<b>API Server</b><br/>Django-Ninja"]
+        Async["<b>Async Workers</b><br/>Celery & Redis<br/>Simulation & Relayer"]
+        DB[(<b>PostgreSQL</b>)]
     end
+    class API,Async,DB backend
 
-    subgraph External Services
-        G[DAGScanner API]
-        H[IPFS]
-        I[LLM API]
+    subgraph "External Services"
+        LLM[<b>LLM API</b>]
+        DAGScanner[<b>DAGScanner API</b>]
+        IPFS[<b>IPFS Storage</b>]
     end
+    class LLM,DAGScanner,IPFS external
 
-    subgraph Blockchain
-        J[BlockDAG Testnet]
-        K[IntentWallet Contract]
+    subgraph "BlockDAG Network"
+        Wallet[<b>IntentWallet Contract</b>]
+        Testnet[<b>Awakening Testnet</b>]
     end
+    class Wallet,Testnet blockchain
 
-    A -- "1. POST /parse-intent" --> B
-    B -- "2. Parse" --> I
-    B -- "3. Plan & Analyze" --> G
-    B -- "4. Save Intent/Plan" --> F
-    B -- "5. Enqueue Simulation" --> C
-    C -- "6. Dispatch" --> D
-    D -- "7. Fork & Simulate" --> J
-    D -- "8. Store Result" --> F
-    A -- "9. User Signs Plan" --> B
-    B -- "10. Verify & Enqueue Execution" --> C
-    C -- "11. Dispatch" --> E
-    E -- "12. Execute Batch Tx" --> K
-    K -- "13. State Change" --> J
-    E -- "14. Upload Proof" --> H
-    E -- "15. Write Receipt" --> K
+    %% --- Main Flows ---
+    UI -- "1. User Intent" --> API
+    
+    API -- "2. Parse & Plan" --> LLM
+    API -- "3. Analyze Contracts" --> DAGScanner
+    API -- "4. Persist State" --> DB
+
+    API -. "5. Enqueue Simulation" .-> Async
+    Async -- "6. Fork & Simulate" --> Testnet
+    Async -- "7. Update Result" --> DB
+
+    UI -- "8. Signed Plan" --> API
+    API -. "9. Enqueue Execution" .-> Async
+
+    Async -- "10. Submit Tx Bundle" --> Wallet
+    Wallet -- "11. Executes on" --> Testnet
+    Async -- "12. Store Artifact" --> IPFS
 ```
