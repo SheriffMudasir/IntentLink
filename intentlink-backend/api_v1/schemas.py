@@ -53,3 +53,20 @@ class PlanOutput(Schema):
     plan_id: uuid.UUID
     candidates: List[CandidateSchema]
     chosen: CandidateSchema
+    
+    
+    
+# === Execution Schemas ===
+
+class SubmitIntentInput(Schema):
+    plan_id: uuid.UUID
+
+class SubmitIntentOutput(Schema):
+    execution_id: uuid.UUID
+    status: str
+
+class ExecutionStatusOutput(Schema):
+    execution_id: uuid.UUID
+    status: str
+    tx_hash: Optional[str] = None
+    logs: List[str] = []

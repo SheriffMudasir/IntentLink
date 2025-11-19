@@ -1,8 +1,13 @@
 # api_v1/api.py
 from ninja import Router
 from ninja.errors import HttpError
-from .schemas import IntentParseInput, IntentParseOutput, PlanInput, PlanOutput, CandidateSchema
-from .models import Intent, Plan
+from .schemas import (
+    IntentParseInput, IntentParseOutput, 
+    PlanInput, PlanOutput, CandidateSchema,
+    SubmitIntentInput, SubmitIntentOutput, ExecutionStatusOutput 
+)
+from .models import Intent, Plan, Execution
+from .tasks import execute_plan_task 
 from services.security_service import security_service
 import logging
 import traceback
@@ -348,4 +353,60 @@ def plan_intent(request, payload: PlanInput):
         plan_id=new_plan.id,
         candidates=candidate_results,
         chosen=chosen_candidate
+    )
+
+
+
+
+@router.post("/submit-intent/", response=SubmitIntentOutput, summary="Submit a Plan for Execution")
+def submit_intent(request, payload: SubmitIntentInput):
+    """
+    Accepts a plan_id, creates an Execution record, and queues the async task.
+    """
+    logger.info(f"Submit Intent called for Plan ID: {payload.plan_id}")
+    
+    try:
+        plan = Plan.objects.get(id=payload.plan_id)
+    except Plan.DoesNotExist:
+        raise HttpError(404, "Plan not found")
+
+    # Idempotency check: Has this already been executed?
+    if hasattr(plan, 'execution'):
+        return SubmitIntentOutput(
+            execution_id=plan.execution.id,
+            status=plan.execution.status
+        )
+
+    # Create Execution Record
+    execution = Execution.objects.create(
+        plan=plan,
+        status=Execution.Status.PENDING,
+        relayer_address="0xRelayerBot" # Placeholder
+    )
+    
+    # Trigger the Celery Task
+    execute_plan_task.delay(execution.id)
+    
+    logger.info(f"Execution {execution.id} queued.")
+
+    return SubmitIntentOutput(
+        execution_id=execution.id,
+        status=execution.status
+    )
+
+@router.get("/execution/{execution_id}/status/", response=ExecutionStatusOutput, summary="Poll Execution Status")
+def get_execution_status(request, execution_id: str):
+    """
+    Returns the current status and tx_hash of an execution.
+    """
+    try:
+        execution = Execution.objects.get(id=execution_id)
+    except Execution.DoesNotExist:
+        raise HttpError(404, "Execution not found")
+
+    return ExecutionStatusOutput(
+        execution_id=execution.id,
+        status=execution.status,
+        tx_hash=execution.tx_hash,
+        logs=execution.receipt.get("logs", []) if execution.receipt else []
     )

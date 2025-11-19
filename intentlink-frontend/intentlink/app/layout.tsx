@@ -1,12 +1,13 @@
 // app/layout.tsx
 import type { Metadata } from "next";
 import { Rajdhani, Inter, JetBrains_Mono } from "next/font/google";
-import { Toaster } from "@/components/ui/sonner"; // <-- Import
+import { Toaster } from "@/components/ui/sonner";
+import Image from "next/image";
 import "./globals.css";
 // Font configuration
 const rajdhani = Rajdhani({
   subsets: ["latin"],
-  weight: ['400', '600', '700'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-rajdhani',
 });
 
@@ -21,8 +22,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IntentLink",
-  description: "The Future of DeFi Execution",
+  title: "IntentLink | AI-Powered DeFi Execution",
+  description: "Execute complex DeFi strategies with pure intent. Secured by DAGScanner.",
 };
 
 export default function RootLayout({
@@ -32,14 +33,33 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${rajdhani.variable} ${inter.variable} ${jetbrainsMono.variable} font-body bg-space-900 text-white`}>
-        {/* Main background container */}
-        <div className="fixed top-0 left-0 w-full h-full bg-cover bg-center z-[-2]" style={{ backgroundImage: "url('/images/IntentLinkBackground.png')" }} />
-        
-        {/* Faint grid overlay */}
-        <div className="fixed top-0 left-0 w-full h-full z-[-1] bg-[url('/grid.svg')] opacity-20" />
+      <body className={`${rajdhani.variable} ${inter.variable} ${jetbrainsMono.variable} font-body bg-background text-white min-h-screen overflow-x-hidden selection:bg-primary selection:text-black`}>
 
-        <main>{children}</main>
+        {/* Layer 1: The Image */}
+        <div className="fixed inset-0 z-0">
+          <Image
+            src="/IntentLinkBackground.png"
+            alt="Background"
+            fill
+            className="object-cover opacity-30"
+            priority
+          />
+        </div>
+
+        {/* Layer 2: The Gradient Overlay (Vignette) */}
+        <div className="fixed inset-0 z-0 bg-gradient-to-b from-black/90 via-black/80 to-black/95 pointer-events-none" />
+
+        {/* Layer 2.5: Additional Center Darkening */}
+        <div className="fixed inset-0 z-0 bg-radial-gradient from-transparent via-black/40 to-black/60 pointer-events-none" />
+
+        {/* Layer 3: Grid Pattern */}
+        <div className="fixed inset-0 z-0 bg-[url('/grid.svg')] opacity-10 pointer-events-none" />
+
+        {/* Layer 4: Content */}
+        <div className="relative z-10">
+          {children}
+        </div>
+
         <Toaster theme="dark" position="bottom-right" />
       </body>
     </html>

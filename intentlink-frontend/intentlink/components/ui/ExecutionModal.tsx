@@ -1,12 +1,12 @@
 // components/ui/ExecutionModal.tsx
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { AppStatus } from '@/app/page';
+import { IntentStatus } from '@/hooks/use-intent';
 import { PlanResponse } from '@/lib/types';
 import { CheckCircle2, Loader, XCircle } from 'lucide-react';
 
 interface ExecutionModalProps {
   isOpen: boolean;
-  status: AppStatus;
+  status: IntentStatus;
   planDetails: PlanResponse['chosen'] | null;
   error: string | null;
 }

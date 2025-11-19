@@ -8,7 +8,7 @@ const config = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
-	],
+  ],
   prefix: "",
   theme: {
     container: {
@@ -19,36 +19,59 @@ const config = {
       },
     },
     extend: {
-      // Direct access to our design system colors for gradients etc.
       colors: {
-        space: {
-          900: '#030407',
-          800: '#0B0C15',
-          700: '#151725',
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "#02040a", // The "Void"
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "#00f0ff", // Primary Cyan
+          foreground: "#000000",
+          glow: "#00f0ff80",
+          dark: "#00a3cc"
         },
-        cyber: {
-          cyan: '#00F0FF',
-          purple: '#7000FF',
-          pink: '#FF0099',
-          yellow: '#FCEE0A',
+        secondary: {
+          DEFAULT: "#bd00ff", // Secondary Magenta
+          foreground: "#ffffff",
+          glow: "#bd00ff80",
+          dark: "#8a00bd"
         },
-        defi: {
-          success: '#00FF94',
-          error: '#FF2A2A',
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
         },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        // Custom Design System Colors
         glass: {
-          stroke: 'rgba(255, 255, 255, 0.1)',
-          fill: 'rgba(11, 12, 21, 0.6)',
-        },
+          border: "rgba(255, 255, 255, 0.1)",
+          surface: "rgba(2, 4, 10, 0.6)",
+        }
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        display: ["var(--font-rajdhani)", "sans-serif"],
+        heading: ["var(--font-rajdhani)", "sans-serif"],
         body: ["var(--font-inter)", "sans-serif"],
         mono: ["var(--font-jetbrains-mono)", "monospace"],
-      },
-      boxShadow: {
-        'cyber-cyan-glow': '0 0 15px rgba(0, 240, 255, 0.1)',
-        'cyber-cyan-glow-hover': '0 0 25px rgba(0, 240, 255, 0.5)',
       },
       keyframes: {
         "accordion-down": {
@@ -59,10 +82,31 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+        pulse: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.5' },
+        },
+        "gradient-x": {
+            "0%, 100%": {
+                "background-size": "200% 200%",
+                "background-position": "left center"
+            },
+            "50%": {
+                "background-size": "200% 200%",
+                "background-position": "right center"
+            }
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'gradient-x': 'gradient-x 15s ease infinite',
       },
     },
   },
