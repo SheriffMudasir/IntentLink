@@ -1,4 +1,3 @@
-// components/ui/SuccessDisplay.tsx (REVISED)
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -11,10 +10,13 @@ interface SuccessDisplayProps {
 
 const BLOCKDAG_EXPLORER_URL = 'https://awakening.bdagscan.com/tx/';
 
+/**
+ * Success display component for completed intent executions
+ * @param {SuccessDisplayProps} props - Component props
+ */
 export function SuccessDisplay({ txHash, onReset }: SuccessDisplayProps) {
   const explorerLink = txHash ? `${BLOCKDAG_EXPLORER_URL}${txHash}` : '#';
 
-  // REMOVED the outer div with card styling. It's now just a fragment.
   return (
     <div className="w-full flex flex-col items-center gap-6 text-center animate-fade-in">
       <div className="flex items-center gap-4">
@@ -40,7 +42,7 @@ export function SuccessDisplay({ txHash, onReset }: SuccessDisplayProps) {
 
       <Button
         onClick={onReset}
-        variant="secondary" // Use a secondary style to de-emphasize
+        variant="secondary"
         className="mt-4 font-display uppercase tracking-wider text-lg px-8 py-4 rounded-lg text-white font-bold"
       >
         Execute Another Intent

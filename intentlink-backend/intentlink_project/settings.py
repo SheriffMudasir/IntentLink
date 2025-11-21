@@ -7,87 +7,35 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-
-# Load environment variables from .env file
-env_path = os.path.join(BASE_DIR, '.env')
-print(f"[STARTUP] Loading .env from: {env_path}")
-print(f"[STARTUP] .env file exists: {os.path.exists(env_path)}")
-load_dotenv(env_path)
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True
 
-# Log environment variable loading status
-print("[STARTUP] Environment Variables Check:")
-print(f"  SECRET_KEY present: {bool(SECRET_KEY)}")
-print(f"  GOPLUS_API_KEY: {os.getenv('GOPLUS_API_KEY', '(NOT SET)')}")
-print(f"  GOPLUS_API_SECRET present: {bool(os.getenv('GOPLUS_API_SECRET'))}")
-print(f"  GOPLUS_API_SECRET value length: {len(os.getenv('GOPLUS_API_SECRET', ''))}")
-print(f"  BLOCKDAG_RPC_URL: {os.getenv('BLOCKDAG_RPC_URL', '(NOT SET)')}")
-print(f"  REDIS_URL: {os.getenv('REDIS_URL', '(NOT SET)')}")
-print(f"  POSTGRES_DB: {os.getenv('POSTGRES_DB', '(NOT SET)')}")
-
-# Configure logging
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {asctime} {name}: {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
-            'level': 'DEBUG',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG',
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'api_v1': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-        'services': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-    },
-}
-
 ALLOWED_HOSTS = ["*"]
 
+# CORS Configuration
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
-# External API Keys and Services
 GOPLUS_API_KEY = os.getenv('GOPLUS_API_KEY')
 GOPLUS_API_SECRET = os.getenv('GOPLUS_API_SECRET')
 BLOCKDAG_RPC_URL = os.getenv('BLOCKDAG_RPC_URL')
 
-# Log the loaded values (masked for security)
-print("[STARTUP] Settings loaded:")
-print(f"  GOPLUS_API_KEY: {'*' * (len(GOPLUS_API_KEY) if GOPLUS_API_KEY else 0) if GOPLUS_API_KEY else '(NOT SET)'}")
-print(f"  GOPLUS_API_SECRET: {'*' * (len(GOPLUS_API_SECRET) if GOPLUS_API_SECRET else 0) if GOPLUS_API_SECRET else '(NOT SET)'}")
-print(f"  BLOCKDAG_RPC_URL: {BLOCKDAG_RPC_URL if BLOCKDAG_RPC_URL else '(NOT SET)'}")
-
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -96,13 +44,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    # custom apps
+    'corsheaders',
     'api_v1',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -131,9 +79,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'intentlink_project.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -145,9 +90,6 @@ DATABASES = {
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -165,9 +107,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -177,18 +116,11 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
 STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# CELERY SETTINGS
 CELERY_BROKER_URL = os.getenv('REDIS_URL')
 CELERY_RESULT_BACKEND = os.getenv('REDIS_URL')
 CELERY_ACCEPT_CONTENT = ['json']

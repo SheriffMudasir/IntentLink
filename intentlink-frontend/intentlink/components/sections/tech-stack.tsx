@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 
 const techStack = [
-    "BlockDAG", "Next.js", "Tailwind CSS", "Solidity", "OpenAI", "GoPlus", "Ethers.js", "Framer Motion"
+    "BlockDAG", "Solidity", "Gemini", "GoPlus", "Ethers.js"
 ];
 
 export function TechStack() {

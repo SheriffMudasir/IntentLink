@@ -6,17 +6,6 @@ import { ethers } from 'ethers';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-// Type definition to prevent TypeScript errors with window.ethereum
-declare global {
-  interface Window {
-    ethereum?: {
-      request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
-      on?: (event: string, handler: (params: unknown) => void) => void;
-      removeListener?: (event: string, handler: (params: unknown) => void) => void;
-    };
-  }
-}
-
 interface WalletConnectProps {
   walletAddress: string | null;
   setWalletAddress: (address: string | null) => void;

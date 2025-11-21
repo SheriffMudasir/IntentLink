@@ -1,3 +1,4 @@
+"""Django app configuration for api_v1."""
 from django.apps import AppConfig
 
 

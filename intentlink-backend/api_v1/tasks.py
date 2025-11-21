@@ -8,12 +8,11 @@ logger = logging.getLogger(__name__)
 
 @shared_task
 def execute_plan_task(execution_id):
+    """Simulate on-chain execution of a plan.
+    
+    In production, this will use the Relayer private key to sign and send transactions.
     """
-    Simulates the on-chain execution of a plan.
-    For Wave 2 Demo: We simulate the delay and state changes.
-    For Prod: This will use the Relayer private key to sign and send the batch.
-    """
-    logger.info(f"[Task] Starting execution for ID: {execution_id}")
+    logger.info(f"Starting execution for ID: {execution_id}")
     
     try:
         execution = Execution.objects.get(id=execution_id)
@@ -46,12 +45,12 @@ def execute_plan_task(execution_id):
         execution.plan.status = Plan.Status.EXECUTED
         execution.plan.save()
         
-        logger.info(f"[Task] Execution {execution_id} COMPLETED. Hash: {fake_tx_hash}")
+        logger.info(f"Execution {execution_id} completed. Hash: {fake_tx_hash}")
         
     except Execution.DoesNotExist:
-        logger.error(f"[Task] Execution {execution_id} not found!")
+        logger.error(f"Execution {execution_id} not found")
     except Exception as e:
-        logger.error(f"[Task] Execution failed: {e}")
+        logger.error(f"Execution failed: {e}")
         if 'execution' in locals():
             execution.status = Execution.Status.FAILED
             execution.save()

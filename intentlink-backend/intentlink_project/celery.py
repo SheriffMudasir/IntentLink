@@ -1,4 +1,5 @@
 # intentlink_project/celery.py
+"""Celery configuration for IntentLink project."""
 import os
 from celery import Celery
 

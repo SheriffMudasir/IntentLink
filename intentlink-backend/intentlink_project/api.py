@@ -1,4 +1,5 @@
 # intentlink_project/api.py
+"""Main API configuration using Django Ninja."""
 from ninja import NinjaAPI
 from api_v1.api import router as v1_router
 

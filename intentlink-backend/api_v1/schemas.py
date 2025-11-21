@@ -1,25 +1,28 @@
 # api_v1/schemas.py
 from ninja import Schema
+from pydantic import field_validator
 from typing import Optional, List
 import uuid
+import re
 
 # === Input Schemas ===
 
 class IntentParseInput(Schema):
-    """
-    Schema for the input to the /parse-intent endpoint.
-    """
+    """Input schema for intent parsing endpoint."""
     input: str
     user_wallet: str
     chain_id: int = 1043
 
+    @field_validator('user_wallet')
+    def validate_eth_address(cls, v):
+        if not re.match(r"^0x[a-fA-F0-9]{40}$", v):
+            raise ValueError('Invalid EVM wallet address format. Must be 0x followed by 40 hex characters.')
+        return v
+
 # === Output Schemas ===
 
 class IntentSchema(Schema):
-    """
-    Represents the structured JSON of a parsed intent.
-    This schema must be kept strict to prevent LLM hallucinations.
-    """
+    """Structured representation of a parsed intent."""
     intent_type: str
     asset: str
     amount: float
@@ -27,9 +30,7 @@ class IntentSchema(Schema):
     target: str
 
 class IntentParseOutput(Schema):
-    """
-    Schema for the output of the /parse-intent endpoint.
-    """
+    """Output schema for parsed intent with status."""
     intent_id: uuid.UUID
     status: str
     intent: IntentSchema

@@ -6,15 +6,17 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { ShootingStars } from "@/components/ui/shooting-stars";
 import { StarsBackground } from "@/components/ui/stars-background";
 import { BackgroundBeams } from "@/components/ui/background-beams";
-import { ArrowRight, ShieldCheck, ExternalLink, Loader2, CheckCircle } from "lucide-react";
+import { ArrowRight, ShieldCheck, ExternalLink, Loader2, CheckCircle, Wallet } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useIntent } from "@/hooks/use-intent";
+import { useWallet } from "@/contexts/WalletContext";
 
 export function Hero() {
     const [typedText, setTypedText] = useState("");
     const fullText = "Stake 1000 BDAG in the safest farm";
 
+    const { walletAddress, chainId, connectWallet } = useWallet();
     const { status, chosenCandidate, txHash, processIntent, confirmExecution, reset } = useIntent();
 
     // Simple typewriter effect for demo purposes
@@ -95,7 +97,35 @@ export function Hero() {
                 className="w-full max-w-3xl mb-12 min-h-[200px]"
             >
                 <AnimatePresence mode="wait">
-                    {status === 'idle' || status === 'parsing' || status === 'planning' || status === 'error' ? (
+                    {!walletAddress ? (
+                        <motion.div
+                            key="connect-wallet"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="flex flex-col items-center justify-center gap-6 p-12 rounded-2xl border border-primary/30 bg-black/40 backdrop-blur-md"
+                        >
+                            <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
+                                <Wallet className="w-8 h-8 text-primary" />
+                            </div>
+                            <div className="text-center">
+                                <h3 className="text-2xl font-heading font-bold text-white mb-2">
+                                    Connect Your Wallet
+                                </h3>
+                                <p className="text-gray-400 max-w-md">
+                                    To start executing DeFi intents, please connect your Web3 wallet
+                                </p>
+                            </div>
+                            <ActionButton 
+                                onClick={connectWallet}
+                                size="lg"
+                                className="bg-linear-to-r from-primary to-secondary"
+                            >
+                                <Wallet className="mr-2 h-5 w-5" />
+                                CONNECT WALLET
+                            </ActionButton>
+                        </motion.div>
+                    ) : status === 'idle' || status === 'parsing' || status === 'planning' || status === 'error' ? (
                         <motion.div
                             key="input"
                             initial={{ opacity: 0, y: 10 }}
@@ -103,7 +133,7 @@ export function Hero() {
                             exit={{ opacity: 0, y: -10 }}
                         >
                             <IntentInput
-                                onSubmit={(val) => processIntent(val)}
+                                onSubmit={(val) => processIntent(val, walletAddress, chainId || 1043)}
                                 placeholder={typedText}
                                 isLoading={status === 'parsing' || status === 'planning'}
                             />
@@ -172,12 +202,23 @@ export function Hero() {
                                         <CheckCircle className="w-8 h-8" />
                                     </div>
                                     <h3 className="text-2xl font-bold text-white mb-2">Execution Confirmed!</h3>
-                                    <p className="text-gray-300 mb-6">Your intent has been successfully executed on BlockDAG.</p>
+                                    <p className="text-gray-300 mb-4">Your intent has been successfully executed on BlockDAG.</p>
 
                                     {txHash && (
-                                        <div className="p-3 rounded-lg bg-black/40 border border-white/10 font-mono text-sm text-gray-400 mb-6 break-all">
-                                            Tx: {txHash}
-                                        </div>
+                                        <>
+                                            <div className="p-3 rounded-lg bg-black/40 border border-white/10 font-mono text-sm text-gray-400 mb-3 break-all">
+                                                Tx: {txHash}
+                                            </div>
+                                            <a
+                                                href={`https://awakening.bdagscan.com/tx/${txHash}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-lg bg-cyber-cyan/10 border border-cyber-cyan/30 text-cyber-cyan hover:bg-cyber-cyan/20 hover:border-cyber-cyan transition-colors"
+                                            >
+                                                <span className="font-medium">View on Block Explorer</span>
+                                                <ExternalLink className="w-4 h-4" />
+                                            </a>
+                                        </>
                                     )}
 
                                     <ActionButton onClick={reset}>Start New Intent</ActionButton>
