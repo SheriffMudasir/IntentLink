@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.26;
 
 import "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
@@ -9,14 +9,14 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title IntentWallet
- * @author IntentLink Team
+ * @author Ubuntu Labs
  * @notice An Account-Abstraction wallet for executing signed, batched transactions (plans).
  */
 contract IntentWallet is Ownable, Pausable, ReentrancyGuard, EIP712 {
     // --- Data Structures ---
     struct Plan {
         bytes32 planId;
-        bytes32 planHash; // keccak256 of the canonicalized plan JSON
+        bytes32 planHash;
         uint256 nonce;
         uint256 expiry;
     }

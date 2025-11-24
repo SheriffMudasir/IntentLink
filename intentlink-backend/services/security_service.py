@@ -14,14 +14,14 @@ logger = logging.getLogger(__name__)
 
 
 class SecurityReport(Schema):
-    \"\"\"Security validation report from GoPlus API.\"\"\"
+    """Security validation report from GoPlus API."""
     is_safe: bool
     safety_score: int
     warnings: List[str]
 
 
 class SecurityService:
-    \"\"\"Security validation service using GoPlus API.\"\"\"
+    """Security validation service using GoPlus API."""
     GOPLUS_API_BASE = "https://api.gopluslabs.io/api/v1"
     
     def __init__(self, api_key: str, api_secret: str, rpc_url: str, redis_url: str):
@@ -38,7 +38,7 @@ class SecurityService:
         self.http_client = httpx.Client(timeout=30.0)
 
     def _get_access_token(self) -> str:
-        \"\"\"Fetch GoPlus access token from REST API, caching in Redis.\"\"\"
+        """Fetch GoPlus access token from REST API, caching in Redis."""
         cached_token = self.redis_client.get(self.token_cache_key)
         if cached_token:
             return cached_token
@@ -107,11 +107,11 @@ class SecurityService:
             raise
 
     def _find_deployer_address(self, chain_id: str, contract_address: str) -> Optional[str]:
-        \"\"\"Mock deployer address lookup for hackathon demo.\"\"\"
+        """Mock deployer address lookup for hackathon demo."""
         return "0xc8b759860149542a98a3eb57c14aadf59d6d89b9"
 
     def run_security_check(self, chain_id: str, contract_address: str) -> SecurityReport:
-        \"\"\"Execute two-step security check using GoPlus REST API.\"\"\"
+        """Execute two-step security check using GoPlus REST API."""
         logger.info(f"Security check for {contract_address} on chain {chain_id}")
         
         warnings = []
@@ -205,7 +205,7 @@ class SecurityService:
 
 
 def _create_security_service():
-    \"\"\"Create SecurityService singleton instance.\"\"\"
+    """Create SecurityService singleton instance."""
     api_key = getattr(settings, "GOPLUS_API_KEY", "") or ""
     api_secret = getattr(settings, "GOPLUS_API_SECRET", "") or ""
     rpc_url = getattr(settings, "BLOCKDAG_RPC_URL", "")
