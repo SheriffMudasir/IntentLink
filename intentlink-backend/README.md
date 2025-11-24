@@ -128,7 +128,7 @@ The backend consists of four primary services orchestrated by `docker-compose`:
     docker-compose exec web python manage.py createsuperuser
     ```
 
-8.  **Access the API:**
+8.  **Access the APIs:**
     - The API is now running at `http://localhost:8000/api/`.
     - Interactive API documentation (Swagger UI) is available at `http://localhost:8000/api/v1/docs`.
     - The Django Admin is at `http://localhost:8000/admin/`.
