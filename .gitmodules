@@ -1,0 +1,6 @@
+[submodule "intentlink-backend"]
+	path = intentlink-backend
+	url = https://github.com/SheriffMudasir/IntentLink-Backend.git
+[submodule "intentlink-frontend"]
+	path = intentlink-frontend
+	url = https://github.com/SheriffMudasir/IntentLink-Frontend.git
